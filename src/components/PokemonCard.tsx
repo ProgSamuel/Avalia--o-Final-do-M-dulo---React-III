@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pokemon } from "../models/pokemon.model";
-import axios from "axios";
 import { Box, Card, CardContent, CardMedia, Chip, CircularProgress, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import { getPokemonDetails } from "../api.service";
 
 export const PokemonCard: React.FC<{ pokemon: Pokemon }> = ({ pokemon }) => {
     const [pokemonDetails, setPokemonDetails] = useState<any>(null);
@@ -10,10 +10,9 @@ export const PokemonCard: React.FC<{ pokemon: Pokemon }> = ({ pokemon }) => {
   
     useEffect(() => {
       setLoading(true);
-      axios
-        .get(pokemon.url)
-        .then((res) => {
-          setPokemonDetails(res.data);
+      getPokemonDetails(pokemon.url)
+        .then((details) => {
+          setPokemonDetails(details);
           setLoading(false);
         })
         .catch((error) => {
@@ -66,4 +65,3 @@ export const PokemonCard: React.FC<{ pokemon: Pokemon }> = ({ pokemon }) => {
       </Card>
     );
   };
-  

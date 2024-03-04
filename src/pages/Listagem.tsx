@@ -1,35 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Grid, CircularProgress, Pagination } from '@mui/material';
 import { Pokemon } from '../models/pokemon.model';
 import { PokemonCard } from '../components/PokemonCard';
 import { useAppDispatch, useAppSelector } from '../config/hooks';
 import { setPokemonSuccess } from '../config/modules/pokemon.slice';
 import { setPage } from '../config/modules/page.slice';
+import { getPokemonList } from '../api.service';
 
 const Listagem: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const pokemonList = useAppSelector((state)=> state.pokemonSlice.data)
   const page = useAppSelector((state)=> state.pageSlice.page)
   const itemsPerPage = useAppSelector((state)=> state.pageSlice.itemsPerPage)
-  const [loading, setLoading] = useState<boolean>(true);
 
   const dispatch = useAppDispatch()
 
-
-
   useEffect(() => {
     setLoading(true);
-    axios
-      .get(`https://pokeapi.co/api/v2/pokemon?limit=${itemsPerPage}&offset=${(page - 1) * itemsPerPage}`)
-      .then((res) => {
-        dispatch(setPokemonSuccess(res.data.results))
+    getPokemonList(itemsPerPage, (page - 1) * itemsPerPage)
+      .then((results) => {
+        dispatch(setPokemonSuccess(results))
         setLoading(false);
       })
       .catch((error) => {
         console.error('Erro ao buscar os Pokémon:', error);
         setLoading(false);
       });
-  }, [page]);
+  }, [page, itemsPerPage]);
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
     dispatch(setPage(value))

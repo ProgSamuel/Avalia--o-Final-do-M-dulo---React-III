@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import { Button, Typography, CircularProgress, Chip, Box, Grid } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { getPokemonDetailsById } from '../api.service';
 
 const PokemonDetails: React.FC = () => {
   const params = useParams<{ id: string }>();
@@ -12,10 +12,9 @@ const PokemonDetails: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios
-      .get(`https://pokeapi.co/api/v2/pokemon/${id}`)
-      .then((res) => {
-        setPokemonDetails(res.data);
+    getPokemonDetailsById(id!)
+      .then((details) => {
+        setPokemonDetails(details);
         setLoading(false);
       })
       .catch((error) => {
@@ -35,8 +34,8 @@ const PokemonDetails: React.FC = () => {
           <Typography variant="h4" gutterBottom>
             Detalhes
           </Typography>
-          <Button component={Link} to="/" sx={{my:'12px', fontWeight:600, color:'white', backgroundColor:"GrayText", border:'none', display:'flex', alignItems:'center'}} startIcon={<ArrowBackIcon />} variant="outlined">
-            Voltar à lista
+          <Button component={Link} to="/" sx={{my:'12px', fontWeight:600, color:'white', backgroundColor:"#65499c", border:'none', display:'flex', alignItems:'center'}}  variant="outlined">
+          <ArrowBackIcon fontSize='small' />
           </Button>
         </Box>
           <Grid container spacing={3} mt={2}>
