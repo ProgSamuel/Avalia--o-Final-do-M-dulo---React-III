@@ -8,6 +8,15 @@ const initialState: PokemonState = {
     error: null,
 };
 
+const extractPokemonId = (url: string): string => {
+    const idRegex = /\/(\d+)\/$/;
+    const match = url.match(idRegex);
+    if (match && match[1]) {
+        return match[1];
+    }
+    return '';
+};
+
 const pokemonSlice = createSlice({
     name: "pokemon",
     initialState,
@@ -18,7 +27,11 @@ const pokemonSlice = createSlice({
         },
         setPokemonSuccess: (state, action: PayloadAction<Pokemon[]>) => {
             state.loading = false;
-            state.data = action.payload;
+            state.data = action.payload.map(pokemon => ({
+                ...pokemon,
+                isPokedex:false,
+                id: extractPokemonId(pokemon.url)
+            }));
         },
         setPokemonError: (state, action: PayloadAction<string>) => {
             state.loading = false;
